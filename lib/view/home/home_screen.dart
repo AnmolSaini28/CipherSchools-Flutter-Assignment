@@ -289,7 +289,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ],
               ),
-              SizedBox(height: 24.h),
+              SizedBox(height: 12.h),
               Column(
                 children: recentTransactions
                     .map(
