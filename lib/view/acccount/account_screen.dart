@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hive/hive.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -25,7 +26,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final List<String> routes = [
       '/home',
       '',
-      '/income',
+      '/dialog',
       '',
       '/profile',
     ];
@@ -42,10 +43,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
       );
     }
 
-    Future<void> _logout() async {
+    Future<void> clearHiveData() async {
+      try {
+        await Hive.deleteFromDisk();
+        await Hive.close();
+      } catch (e) {
+        debugPrint("Error clearing Hive data: ${e.toString()}");
+      }
+    }
+
+    Future<void> logout() async {
       await FirebaseAuth.instance.signOut();
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.remove('userId');
+
+      await clearHiveData();
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Logout successful!')),
@@ -210,8 +220,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       child: InkWell(
                         onTap: () async {
-                          await FirebaseAuth.instance.signOut();
-                          context.go(AppRouter.signUpRoute);
+                          logout();
                         },
                         child: _buildOption(
                           icon: 'assets/images/logout.svg',

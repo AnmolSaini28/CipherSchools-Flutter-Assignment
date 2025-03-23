@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:cipherschool_assignment/navigation/app_navigation.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -17,8 +18,14 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     Future.delayed(
       const Duration(seconds: 5),
-      () {
-        context.go(AppRouter.onboardingRoute);
+      () async {
+        if (!mounted) return;
+        bool isSignedIn = await _checkIfUserIsSignedIn();
+        if (mounted) {
+          context.go(
+            isSignedIn ? AppRouter.homeRoute : AppRouter.signUpRoute,
+          );
+        }
       },
     );
   }
@@ -35,5 +42,10 @@ class _SplashScreenState extends State<SplashScreen> {
         ),
       ),
     );
+  }
+
+  Future<bool> _checkIfUserIsSignedIn() async {
+    final user = FirebaseAuth.instance.currentUser;
+    return user != null;
   }
 }

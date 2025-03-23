@@ -29,7 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<String> _routes = [
     '/home',
     '',
-    '/income',
+    '/dialog',
     '',
     '/profile',
   ];
@@ -229,6 +229,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       fontWeight: FontWeight.w600,
                       color: Colors.black,
                     ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
@@ -236,25 +237,30 @@ class _HomeScreenState extends State<HomeScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  IncomeExpenseCard(
-                    title: 'Income',
-                    amount: '₹$totalIncome',
-                    icon: 'assets/images/income.svg',
-                    color: const Color(0xff00A86B),
-                    secondaryTextColor: const Color(0xffFCFCFC),
-                    onTap: () {
-                      context.go(AppRouter.incomeRoute);
-                    },
+                  Expanded(
+                    child: IncomeExpenseCard(
+                      title: 'Income',
+                      amount: '₹$totalIncome',
+                      icon: 'assets/images/income.svg',
+                      color: const Color(0xff00A86B),
+                      secondaryTextColor: const Color(0xffFCFCFC),
+                      onTap: () {
+                        context.go(AppRouter.incomeRoute);
+                      },
+                    ),
                   ),
-                  IncomeExpenseCard(
-                    title: 'Expenses',
-                    amount: '₹$totalExpenses',
-                    icon: 'assets/images/expense.svg',
-                    color: const Color(0xffFD3C4A),
-                    secondaryTextColor: const Color(0xffFCFCFC),
-                    onTap: () {
-                      context.go(AppRouter.expenseRoute);
-                    },
+                  SizedBox(width: 12.w),
+                  Expanded(
+                    child: IncomeExpenseCard(
+                      title: 'Expenses',
+                      amount: '₹$totalExpenses',
+                      icon: 'assets/images/expense.svg',
+                      color: const Color(0xffFD3C4A),
+                      secondaryTextColor: const Color(0xffFCFCFC),
+                      onTap: () {
+                        context.go(AppRouter.expenseRoute);
+                      },
+                    ),
                   ),
                 ],
               ),

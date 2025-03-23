@@ -62,6 +62,7 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
 
     amountController.clear();
     descriptionController.clear();
+    context.go(AppRouter.homeRoute);
   }
 
   @override

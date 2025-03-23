@@ -40,7 +40,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Sign up successful!')),
         );
-        context.go(AppRouter.homeRoute);
+        context.go(AppRouter.onboardingRoute);
       } on FirebaseAuthException catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(e.message ?? 'Sign up failed')),
@@ -68,7 +68,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           content: Text('Signed in with Google!'),
         ),
       );
-      context.go(AppRouter.homeRoute);
+      context.go(AppRouter.onboardingRoute);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Google sign-in failed')),
@@ -83,7 +83,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         leading: Padding(
           padding: EdgeInsets.only(left: 16.w),
           child: InkWell(
-            onTap: () => context.pop(AppRouter.onboardingRoute),
+            onTap: () {},
             child: SvgPicture.asset(
               "assets/images/arrow_left.svg",
               width: 2.w,

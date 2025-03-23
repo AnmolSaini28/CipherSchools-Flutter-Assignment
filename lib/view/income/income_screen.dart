@@ -63,6 +63,7 @@ class _IncomeScreenState extends State<IncomeScreen> {
 
     amountController.clear();
     descriptionController.clear();
+    context.go(AppRouter.homeRoute);
   }
 
   @override

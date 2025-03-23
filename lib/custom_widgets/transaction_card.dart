@@ -100,6 +100,7 @@ class TransactionCard extends StatelessWidget {
                     fontSize: 16.sp,
                     fontWeight: FontWeight.w600,
                   ),
+                  overflow: TextOverflow.ellipsis,
                 ),
                 SizedBox(height: 4.h),
                 Text(

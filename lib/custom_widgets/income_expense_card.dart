@@ -49,27 +49,31 @@ class IncomeExpenseCard extends StatelessWidget {
               ),
             ),
             SizedBox(width: 12.w),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    color: secondaryTextColor,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 14.sp,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      color: secondaryTextColor,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14.sp,
+                    ),
                   ),
-                ),
-                SizedBox(height: 4.h),
-                Text(
-                  amount,
-                  style: TextStyle(
-                    color: secondaryTextColor,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 22.sp,
+                  SizedBox(height: 4.h),
+                  Text(
+                    amount,
+                    style: TextStyle(
+                      color: secondaryTextColor,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 22.sp,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),

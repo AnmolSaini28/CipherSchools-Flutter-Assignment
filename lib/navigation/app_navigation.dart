@@ -1,4 +1,5 @@
 import 'package:cipherschool_assignment/authentication/signup_screen.dart';
+import 'package:cipherschool_assignment/custom_widgets/income_expense_dialog.dart';
 import 'package:cipherschool_assignment/onboarding/onboarding_screen.dart';
 import 'package:cipherschool_assignment/onboarding/splash_screen.dart';
 import 'package:cipherschool_assignment/view/acccount/account_screen.dart';
@@ -15,6 +16,7 @@ class AppRouter {
   static const String expenseRoute = '/expense';
   static const String incomeRoute = '/income';
   static const String profileRoute = '/profile';
+  static const String dialogRoute = '/dialog';
 
   static final GoRouter router = GoRouter(
     initialLocation: splashRoute,
@@ -46,6 +48,10 @@ class AppRouter {
       GoRoute(
         path: profileRoute,
         builder: (context, state) => const ProfileScreen(),
+      ),
+      GoRoute(
+        path: dialogRoute,
+        builder: (context, state) => const IncomeExpenseDialog(),
       ),
     ],
   );
