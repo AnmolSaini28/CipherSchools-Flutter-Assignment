@@ -1,3 +1,4 @@
+import 'package:cipherschool_assignment/constants/app_constants.dart';
 import 'package:cipherschool_assignment/constants/colors.dart';
 import 'package:cipherschool_assignment/custom_widgets/date_tab.dart';
 import 'package:cipherschool_assignment/custom_widgets/income_expense_card.dart';
@@ -62,14 +63,18 @@ class _HomeScreenState extends State<HomeScreen> {
     for (var income in incomeBox.values) {
       String timestamp = income['timestamp'] ?? '12:00 PM';
       incomeSum += income['amount'] as double;
+      String selectedCategory = income['category'];
+      final Map<String, dynamic> categoryInfo =
+          AppConstants.getCategoryData(selectedCategory);
       transactions.add(
         {
           'title': income['category'],
           'subtitle': income['description'],
           'amount': '+ ₹${income['amount'].toStringAsFixed(2)}',
           'time': _formatTime(timestamp),
-          'color': const Color(0xff00A86B),
-          'icon': 'assets/images/image.png',
+          'textColor': const Color(0xff00A86B),
+          'color': categoryInfo['color'],
+          'icon': categoryInfo['icon'],
         },
       );
     }
@@ -77,13 +82,18 @@ class _HomeScreenState extends State<HomeScreen> {
     for (var expense in expenseBox.values) {
       String timestamp = expense['timestamp'] ?? "12:00 PM";
       expenseSum += expense['amount'] as double;
+      String selectedCategory = expense['category'];
+      final Map<String, dynamic> categoryInfo =
+          AppConstants.getCategoryData(selectedCategory);
+
       transactions.add({
         'title': expense['category'],
         'subtitle': expense['description'],
         'amount': '- ₹${expense['amount'].toStringAsFixed(2)}',
         'time': _formatTime(timestamp),
-        'color': const Color(0xffFD3C4A),
-        'icon': 'assets/images/expense.svg',
+        'textColor': const Color(0xffFD3C4A),
+        'color': categoryInfo['color'],
+        'icon': categoryInfo['icon'],
       });
     }
 
@@ -289,7 +299,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         amount: transaction['amount'],
                         time: transaction['time'],
                         backgroundColor: transaction['color'],
-                        textColor: transaction['color'],
+                        textColor: transaction['textColor'],
                         iconPath: transaction['icon'],
                       ),
                     )
