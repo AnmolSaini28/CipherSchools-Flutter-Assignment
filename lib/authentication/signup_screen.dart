@@ -29,7 +29,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool isTermsAccepted = false;
   bool isLoading = false;
 
-  // Firebase Sign Up
   Future<void> _signUpWithEmailPassword() async {
     if (_formKey.currentState!.validate() && isTermsAccepted) {
       setState(() => isLoading = true);
@@ -190,23 +189,58 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   labelText: "Password",
                   hintFontSize: 16.sp,
                   obscureText: !isPasswordVisible,
+                  suffixIcon: Padding(
+                    padding: EdgeInsets.only(right: 20.w),
+                    child: InkWell(
+                      onTap: () {
+                        setState(
+                          () {
+                            isPasswordVisible = !isPasswordVisible;
+                          },
+                        );
+                      },
+                      child: Icon(
+                        isPasswordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ),
                   fontSize: 16.sp,
                   maxlines: 1,
                   floatingLabelBehavior: FloatingLabelBehavior.auto,
                 ),
                 SizedBox(height: 16.h),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Checkbox(
-                      value: isTermsAccepted,
-                      activeColor: primaryColor,
-                      onChanged: (value) {
-                        setState(
-                          () {
-                            isTermsAccepted = value!;
+                    Theme(
+                      data: Theme.of(context).copyWith(
+                        unselectedWidgetColor: primaryColor,
+                      ),
+                      child: Transform.scale(
+                        scale: 1.4,
+                        child: Checkbox(
+                          value: isTermsAccepted,
+                          activeColor: primaryColor,
+                          checkColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5.r),
+                            side: BorderSide(
+                              color: primaryColor,
+                              width: 2.w,
+                            ),
+                          ),
+                          onChanged: (value) {
+                            setState(
+                              () {
+                                isTermsAccepted = value!;
+                              },
+                            );
                           },
-                        );
-                      },
+                        ),
+                      ),
                     ),
                     Expanded(
                       child: RichText(
@@ -236,7 +270,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 CustomButton(
                   text: 'Sign Up',
                   onPressed: () {
-                    context.go(AppRouter.homeRoute);
+                    _signUpWithEmailPassword();
                   },
                 ),
                 SizedBox(height: 16.h),

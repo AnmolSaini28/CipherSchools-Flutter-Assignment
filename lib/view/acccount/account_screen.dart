@@ -1,5 +1,9 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:cipherschool_assignment/constants/colors.dart';
+import 'package:cipherschool_assignment/navigation/app_navigation.dart';
 import 'package:cipherschool_assignment/navigation/custome_bottom_nav_bar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -192,10 +196,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       padding: EdgeInsets.symmetric(
                         horizontal: 24.w,
                       ),
-                      child: _buildOption(
-                        icon: 'assets/images/logout.svg',
-                        label: 'Logout',
-                        color: const Color(0xffFFE2E4),
+                      child: InkWell(
+                        onTap: () async {
+                          await FirebaseAuth.instance.signOut();
+                          context.go(AppRouter.signUpRoute);
+                        },
+                        child: _buildOption(
+                          icon: 'assets/images/logout.svg',
+                          label: 'Logout',
+                          color: const Color(0xffFFE2E4),
+                        ),
                       ),
                     ),
                   ],

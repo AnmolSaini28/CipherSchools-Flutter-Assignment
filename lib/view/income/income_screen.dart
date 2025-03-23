@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:cipherschool_assignment/constants/app_constants.dart';
 import 'package:cipherschool_assignment/constants/colors.dart';
 import 'package:cipherschool_assignment/custom_widgets/custom_button.dart';
@@ -8,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hive/hive.dart';
 
 class IncomeScreen extends StatefulWidget {
   const IncomeScreen({super.key});
@@ -20,6 +23,39 @@ class _IncomeScreenState extends State<IncomeScreen> {
   String? selectedCategory;
   String? selectedWallet;
   final TextEditingController descriptionController = TextEditingController();
+  final TextEditingController amountController = TextEditingController();
+
+  Future<void> _saveIncomeData() async {
+    if (amountController.text.isEmpty ||
+        selectedCategory == null ||
+        descriptionController.text.isEmpty ||
+        selectedWallet == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill all the fields!')),
+      );
+      return;
+    }
+
+    final DateTime now = DateTime.now();
+
+    final incomeData = {
+      'amount': double.parse(amountController.text),
+      'category': selectedCategory,
+      'description': descriptionController.text,
+      'wallet': selectedWallet,
+      'timestamp': now.toIso8601String(),
+    };
+
+    var box = Hive.box('incomeBox');
+    await box.add(incomeData);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Income added successfully! ')),
+    );
+
+    amountController.clear();
+    descriptionController.clear();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,15 +100,27 @@ class _IncomeScreenState extends State<IncomeScreen> {
               ),
             ),
           ),
-          SizedBox(height: 8.h),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.w),
-            child: Text(
-              '₹0',
+            child: TextFormField(
+              controller: amountController,
+              keyboardType: TextInputType.number,
               style: TextStyle(
                 fontSize: 64.sp,
                 fontWeight: FontWeight.w600,
                 color: Colors.white,
+              ),
+              decoration: InputDecoration(
+                prefixIcon: Icon(
+                  Icons.currency_rupee,
+                  size: 60.sp,
+                  color: Colors.white,
+                ),
+                hintText: '0',
+                hintStyle: const TextStyle(
+                  color: Colors.white,
+                ),
+                border: InputBorder.none,
               ),
             ),
           ),
@@ -99,9 +147,11 @@ class _IncomeScreenState extends State<IncomeScreen> {
                       items: AppConstants.categories,
                       selectedValue: selectedCategory,
                       onItemSelected: (value) {
-                        setState(() {
-                          selectedCategory = value;
-                        });
+                        setState(
+                          () {
+                            selectedCategory = value;
+                          },
+                        );
                       },
                     ),
                     SizedBox(height: 16.h),
@@ -111,7 +161,7 @@ class _IncomeScreenState extends State<IncomeScreen> {
                       enabled: true,
                       validator: (val) {
                         if (val!.isEmpty) {
-                          return "Enter Name";
+                          return "Enter Description";
                         }
                         return null;
                       },
@@ -143,7 +193,7 @@ class _IncomeScreenState extends State<IncomeScreen> {
                     SizedBox(height: 20.h),
                     CustomButton(
                       text: 'Continue',
-                      onPressed: () {},
+                      onPressed: _saveIncomeData,
                     ),
                     SizedBox(height: 16.h),
                   ],

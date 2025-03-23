@@ -1,6 +1,7 @@
 import 'package:cipherschool_assignment/constants/colors.dart';
 import 'package:cipherschool_assignment/custom_widgets/date_tab.dart';
 import 'package:cipherschool_assignment/custom_widgets/income_expense_card.dart';
+import 'package:cipherschool_assignment/custom_widgets/transaction_card.dart';
 import 'package:cipherschool_assignment/navigation/app_navigation.dart';
 import 'package:cipherschool_assignment/navigation/custome_bottom_nav_bar.dart';
 import 'package:flutter/material.dart';
@@ -188,139 +189,49 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               SizedBox(height: 24.h),
-              _buildRecentTransactions(),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildRecentTransactions() {
-    List<Map<String, dynamic>> transactions = [
-      {
-        "title": "Shopping",
-        "subtitle": "Buy some grocery",
-        "amount": "- ₹120",
-        "time": "10:00 AM",
-        "icon": "assets/images/shopping.svg",
-        "color": const Color(0xffFFB800)
-      },
-      {
-        "title": "Subscription",
-        "subtitle": "Disney+ Annual..",
-        "amount": "- ₹499",
-        "time": "03:30 PM",
-        "icon": "assets/images/subscription.svg",
-        "color": const Color(0xff7F3DFF)
-      },
-      {
-        "title": "Travel",
-        "subtitle": "Chandigarh to De...",
-        "amount": "- ₹1000",
-        "time": "10:00 AM",
-        "icon": "assets/images/travel.svg",
-        "color": const Color(0xff00A86B)
-      },
-    ];
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildTransactionHeader(),
-        SizedBox(height: 16.h),
-        ...transactions
-            .map((transaction) => _buildTransactionCard(transaction)),
-      ],
-    );
-  }
-
-  Widget _buildTransactionHeader() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          "Recent Transaction",
-          style: TextStyle(
-            fontSize: 16.sp,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        Text(
-          "See All",
-          style: TextStyle(
-            color: const Color(0xff7F3DFF),
-            fontSize: 14.sp,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTransactionCard(Map<String, dynamic> transaction) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 12.h),
-      padding: EdgeInsets.all(12.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12.r),
-      ),
-      child: Row(
-        children: [
-          CircleAvatar(
-            backgroundColor: transaction['color'],
-            radius: 24.r,
-            child: SvgPicture.asset(
-              transaction['icon'],
-              height: 24.h,
-              width: 24.w,
-            ),
-          ),
-          SizedBox(width: 12.w),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  transaction['title'],
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.bold,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Recent Transaction",
+                    style: TextStyle(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black,
+                    ),
                   ),
-                ),
-                SizedBox(height: 4.h),
-                Text(
-                  transaction['subtitle'],
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 12.sp,
+                  Container(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                    decoration: BoxDecoration(
+                      color: const Color(0xffEEE5FF),
+                      borderRadius: BorderRadius.circular(40.r),
+                    ),
+                    child: Text(
+                      "See All",
+                      style: TextStyle(
+                        color: const Color(0xff7F3DFF),
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                transaction['amount'],
-                style: TextStyle(
-                  color: Colors.red,
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.bold,
-                ),
+                ],
               ),
-              SizedBox(height: 4.h),
-              Text(
-                transaction['time'],
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  color: Colors.grey,
+              SizedBox(height: 24.h),
+              const TransactionCard(
+                title: "Shopping",
+                subtitle: "Buy some grocery",
+                amount: "- ₹120",
+                time: "10:00 AM",
+                backgroundColor: Color(
+                  0xffFFB800,
                 ),
+                iconPath: '',
               ),
             ],
           ),
-        ],
+        ),
       ),
     );
   }
