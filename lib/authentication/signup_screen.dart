@@ -4,6 +4,7 @@ import 'package:cipherschool_assignment/constants/colors.dart';
 import 'package:cipherschool_assignment/custom_widgets/custom_button.dart';
 import 'package:cipherschool_assignment/custom_widgets/custom_textfield.dart';
 import 'package:cipherschool_assignment/navigation/app_navigation.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -33,13 +34,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
     if (_formKey.currentState!.validate() && isTermsAccepted) {
       setState(() => isLoading = true);
       try {
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        UserCredential userCredential =
+            await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: emailController.text.trim(),
           password: passwordController.text.trim(),
         );
+
+        await _saveUserToFirestore(
+          uid: userCredential.user!.uid,
+          name: nameController.text.trim(),
+          email: emailController.text.trim(),
+          signUpMethod: 'Email',
+        );
+
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Sign up successful!')),
         );
+
         context.go(AppRouter.onboardingRoute);
       } on FirebaseAuthException catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -62,17 +73,45 @@ class _SignUpScreenState extends State<SignUpScreen> {
         idToken: googleAuth?.idToken,
       );
 
-      await FirebaseAuth.instance.signInWithCredential(credential);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Signed in with Google!'),
-        ),
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+
+      await _saveUserToFirestore(
+        uid: userCredential.user!.uid,
+        name: googleUser!.displayName ?? '',
+        email: googleUser.email,
+        signUpMethod: 'Google',
       );
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Signed in with Google!')),
+      );
+
       context.go(AppRouter.onboardingRoute);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Google sign-in failed')),
       );
+    }
+  }
+
+  Future<void> _saveUserToFirestore({
+    required String uid,
+    required String name,
+    required String email,
+    required String signUpMethod,
+  }) async {
+    try {
+      await FirebaseFirestore.instance.collection('users').doc(uid).set({
+        'uid': uid,
+        'name': name,
+        'email': email,
+        'signUpMethod': signUpMethod,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+      debugPrint('User details saved successfully!');
+    } catch (e) {
+      debugPrint('Error saving user details: ${e.toString()}');
     }
   }
 

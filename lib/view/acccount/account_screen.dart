@@ -3,13 +3,13 @@
 import 'package:cipherschool_assignment/constants/colors.dart';
 import 'package:cipherschool_assignment/navigation/app_navigation.dart';
 import 'package:cipherschool_assignment/navigation/custome_bottom_nav_bar.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive/hive.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -19,6 +19,38 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  String userName = 'Khushi Sharma';
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserName();
+  }
+
+  Future<void> _fetchUserName() async {
+    try {
+      String uid = FirebaseAuth.instance.currentUser!.uid;
+
+      DocumentSnapshot userDoc =
+          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+
+      if (userDoc.exists && userDoc.data() != null) {
+        setState(
+          () {
+            userName = userDoc['name'] ?? 'User';
+          },
+        );
+      }
+    } catch (e) {
+      debugPrint('Error fetching username: ${e.toString()}');
+      setState(
+        () {
+          userName = 'User';
+        },
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     int selectedIndex = 4;
@@ -101,7 +133,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                           ),
                           Text(
-                            'Khushi Sharma',
+                            userName,
                             style: TextStyle(
                               fontSize: 24.sp,
                               fontWeight: FontWeight.w600,
