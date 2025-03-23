@@ -83,7 +83,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         leading: Padding(
           padding: EdgeInsets.only(left: 16.w),
           child: InkWell(
-            onTap: () => Navigator.pop(context),
+            onTap: () => context.pop(AppRouter.onboardingRoute),
             child: SvgPicture.asset(
               "assets/images/arrow_left.svg",
               width: 2.w,

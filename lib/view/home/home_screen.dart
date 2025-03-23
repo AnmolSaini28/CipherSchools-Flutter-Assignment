@@ -60,14 +60,17 @@ class _HomeScreenState extends State<HomeScreen> {
     double expenseSum = 0;
     List<Map<String, dynamic>> transactions = [];
 
-    for (var income in incomeBox.values) {
+    for (var key in incomeBox.keys) {
+      var income = incomeBox.get(key);
       String timestamp = income['timestamp'] ?? '12:00 PM';
       incomeSum += income['amount'] as double;
       String selectedCategory = income['category'];
       final Map<String, dynamic> categoryInfo =
           AppConstants.getCategoryData(selectedCategory);
+
       transactions.add(
         {
+          'key': key,
           'title': income['category'],
           'subtitle': income['description'],
           'amount': '+ ₹${income['amount'].toStringAsFixed(2)}',
@@ -75,11 +78,13 @@ class _HomeScreenState extends State<HomeScreen> {
           'textColor': const Color(0xff00A86B),
           'color': categoryInfo['color'],
           'icon': categoryInfo['icon'],
+          'type': 'income',
         },
       );
     }
 
-    for (var expense in expenseBox.values) {
+    for (var key in expenseBox.keys) {
+      var expense = expenseBox.get(key);
       String timestamp = expense['timestamp'] ?? "12:00 PM";
       expenseSum += expense['amount'] as double;
       String selectedCategory = expense['category'];
@@ -87,6 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
           AppConstants.getCategoryData(selectedCategory);
 
       transactions.add({
+        'key': key,
         'title': expense['category'],
         'subtitle': expense['description'],
         'amount': '- ₹${expense['amount'].toStringAsFixed(2)}',
@@ -94,6 +100,7 @@ class _HomeScreenState extends State<HomeScreen> {
         'textColor': const Color(0xffFD3C4A),
         'color': categoryInfo['color'],
         'icon': categoryInfo['icon'],
+        'type': 'expense',
       });
     }
 
@@ -105,6 +112,19 @@ class _HomeScreenState extends State<HomeScreen> {
         recentTransactions = transactions;
       },
     );
+  }
+
+  Future<void> _deleteTransaction(String key, String type) async {
+    var incomeBox = await Hive.openBox('incomeBox');
+    var expenseBox = await Hive.openBox('expenseBox');
+
+    if (type == 'income' && incomeBox.containsKey(key)) {
+      await incomeBox.delete(key);
+    } else if (type == 'expense' && expenseBox.containsKey(key)) {
+      await expenseBox.delete(key);
+    } else {}
+
+    _fetchData();
   }
 
   String _formatTime(String timestamp) {
@@ -294,6 +314,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: recentTransactions
                     .map(
                       (transaction) => TransactionCard(
+                        keyValue: transaction['key'],
                         title: transaction['title'],
                         subtitle: transaction['subtitle'],
                         amount: transaction['amount'],
@@ -301,6 +322,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         backgroundColor: transaction['color'],
                         textColor: transaction['textColor'],
                         iconPath: transaction['icon'],
+                        onDelete: (key) => _deleteTransaction(
+                          key,
+                          transaction['type'],
+                        ),
                       ),
                     )
                     .toList(),

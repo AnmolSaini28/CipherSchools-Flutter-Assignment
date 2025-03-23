@@ -12,6 +12,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
+import 'package:uuid/uuid.dart';
 
 class ExpenseScreen extends StatefulWidget {
   const ExpenseScreen({super.key});
@@ -38,10 +39,13 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
     }
 
     final DateTime now = DateTime.now();
-
     final String formattedTime = DateFormat('hh:mm a').format(now);
 
+    const uuid = Uuid();
+    final String uniqueKey = uuid.v4();
+
     final expenseData = {
+      'key': uniqueKey,
       'amount': double.parse(amountController.text),
       'category': selectedCategory,
       'description': descriptionController.text,
@@ -50,7 +54,7 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
     };
 
     var box = Hive.box('expenseBox');
-    await box.add(expenseData);
+    await box.put(uniqueKey, expenseData);
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Expense added successfully!')),

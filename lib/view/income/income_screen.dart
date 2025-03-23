@@ -12,6 +12,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
+import 'package:uuid/uuid.dart';
 
 class IncomeScreen extends StatefulWidget {
   const IncomeScreen({super.key});
@@ -41,7 +42,11 @@ class _IncomeScreenState extends State<IncomeScreen> {
 
     final String formattedTime = DateFormat('hh:mm a').format(now);
 
+    const uuid = Uuid();
+    final String uniqueKey = uuid.v4();
+
     final incomeData = {
+      'key': uniqueKey,
       'amount': double.parse(amountController.text),
       'category': selectedCategory,
       'description': descriptionController.text,
@@ -50,7 +55,7 @@ class _IncomeScreenState extends State<IncomeScreen> {
     };
 
     var box = Hive.box('incomeBox');
-    await box.add(incomeData);
+    await box.put(uniqueKey, incomeData);
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Income added successfully! ')),
