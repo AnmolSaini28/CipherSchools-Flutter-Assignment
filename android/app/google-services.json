@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "605002599336",
+    "project_id": "com-cipherschools-assign-72ccf",
+    "storage_bucket": "com-cipherschools-assign-72ccf.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:605002599336:android:7e5eadbe0e0ffef52c2b9d",
+        "android_client_info": {
+          "package_name": "com.example.cipherschool_assignment"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAq9MehDAru6RED-EQoerKqDYsEtBiXum8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
