@@ -11,6 +11,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive/hive.dart';
+import 'package:intl/intl.dart';
 
 class IncomeScreen extends StatefulWidget {
   const IncomeScreen({super.key});
@@ -38,12 +39,14 @@ class _IncomeScreenState extends State<IncomeScreen> {
 
     final DateTime now = DateTime.now();
 
+    final String formattedTime = DateFormat('hh:mm a').format(now);
+
     final incomeData = {
       'amount': double.parse(amountController.text),
       'category': selectedCategory,
       'description': descriptionController.text,
       'wallet': selectedWallet,
-      'timestamp': now.toIso8601String(),
+      'timestamp': formattedTime,
     };
 
     var box = Hive.box('incomeBox');

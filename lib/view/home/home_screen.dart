@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hive/hive.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -19,6 +20,10 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int selectedTabIndex = 0;
   int _selectedIndex = 0;
+  double totalIncome = 0.0;
+  double totalExpenses = 0.0;
+  double accountBalance = 0.0;
+  List<Map<String, dynamic>> recentTransactions = [];
 
   final List<String> _routes = [
     '/home',
@@ -32,15 +37,69 @@ class _HomeScreenState extends State<HomeScreen> {
     if (index == 1 || index == 3) {
       return;
     }
-    setState(
-      () {
-        _selectedIndex = index;
-      },
-    );
+    setState(() {
+      _selectedIndex = index;
+    });
     context.go(_routes[index]);
   }
 
   final List<String> tabs = ["Today", "Week", "Month", "Year"];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchData();
+  }
+
+  Future<void> _fetchData() async {
+    var incomeBox = await Hive.openBox('incomeBox');
+    var expenseBox = await Hive.openBox('expenseBox');
+
+    double incomeSum = 0;
+    double expenseSum = 0;
+    List<Map<String, dynamic>> transactions = [];
+
+    for (var income in incomeBox.values) {
+      String timestamp = income['timestamp'] ?? '12:00 PM';
+      incomeSum += income['amount'] as double;
+      transactions.add(
+        {
+          'title': income['category'],
+          'subtitle': income['description'],
+          'amount': '+ ₹${income['amount'].toStringAsFixed(2)}',
+          'time': _formatTime(timestamp),
+          'color': const Color(0xff00A86B),
+          'icon': 'assets/images/image.png',
+        },
+      );
+    }
+
+    for (var expense in expenseBox.values) {
+      String timestamp = expense['timestamp'] ?? "12:00 PM";
+      expenseSum += expense['amount'] as double;
+      transactions.add({
+        'title': expense['category'],
+        'subtitle': expense['description'],
+        'amount': '- ₹${expense['amount'].toStringAsFixed(2)}',
+        'time': _formatTime(timestamp),
+        'color': const Color(0xffFD3C4A),
+        'icon': 'assets/images/expense.svg',
+      });
+    }
+
+    setState(
+      () {
+        totalIncome = incomeSum;
+        totalExpenses = expenseSum;
+        accountBalance = totalIncome - totalExpenses;
+        recentTransactions = transactions;
+      },
+    );
+  }
+
+  String _formatTime(String timestamp) {
+    return timestamp;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -134,7 +193,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   SizedBox(height: 8.h),
                   Text(
-                    '₹38000',
+                    '₹${accountBalance.toStringAsFixed(2)}',
                     style: TextStyle(
                       fontSize: 40.sp,
                       fontWeight: FontWeight.w600,
@@ -149,7 +208,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   IncomeExpenseCard(
                     title: 'Income',
-                    amount: '₹50000',
+                    amount: '₹$totalIncome',
                     icon: 'assets/images/income.svg',
                     color: const Color(0xff00A86B),
                     secondaryTextColor: const Color(0xffFCFCFC),
@@ -159,7 +218,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   IncomeExpenseCard(
                     title: 'Expenses',
-                    amount: '₹12000',
+                    amount: '₹$totalExpenses',
                     icon: 'assets/images/expense.svg',
                     color: const Color(0xffFD3C4A),
                     secondaryTextColor: const Color(0xffFCFCFC),
@@ -178,9 +237,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     text: tabs[index],
                     isSelected: index == selectedTabIndex,
                     onTap: () {
-                      setState(() {
-                        selectedTabIndex = index;
-                      });
+                      setState(
+                        () {
+                          selectedTabIndex = index;
+                        },
+                      );
                     },
                     selectedColor: const Color(0xffFCEED4),
                     unselectedColor: const Color(0xffFCAC12),
@@ -193,7 +254,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Recent Transaction",
+                    "Recent Transactions",
                     style: TextStyle(
                       fontSize: 18.sp,
                       fontWeight: FontWeight.w600,
@@ -219,15 +280,20 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
               SizedBox(height: 24.h),
-              const TransactionCard(
-                title: "Shopping",
-                subtitle: "Buy some grocery",
-                amount: "- ₹120",
-                time: "10:00 AM",
-                backgroundColor: Color(
-                  0xffFFB800,
-                ),
-                iconPath: '',
+              Column(
+                children: recentTransactions
+                    .map(
+                      (transaction) => TransactionCard(
+                        title: transaction['title'],
+                        subtitle: transaction['subtitle'],
+                        amount: transaction['amount'],
+                        time: transaction['time'],
+                        backgroundColor: transaction['color'],
+                        textColor: transaction['color'],
+                        iconPath: transaction['icon'],
+                      ),
+                    )
+                    .toList(),
               ),
             ],
           ),

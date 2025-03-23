@@ -9,6 +9,7 @@ class TransactionCard extends StatelessWidget {
   final String time;
   final String iconPath;
   final Color backgroundColor;
+  final Color textColor;
 
   const TransactionCard({
     super.key,
@@ -18,6 +19,7 @@ class TransactionCard extends StatelessWidget {
     required this.time,
     required this.iconPath,
     required this.backgroundColor,
+    required this.textColor,
   });
 
   @override
@@ -78,7 +80,7 @@ class TransactionCard extends StatelessWidget {
               Text(
                 amount,
                 style: TextStyle(
-                  color: const Color(0xffFD3C4A),
+                  color: textColor,
                   fontSize: 16.sp,
                   fontWeight: FontWeight.w600,
                 ),

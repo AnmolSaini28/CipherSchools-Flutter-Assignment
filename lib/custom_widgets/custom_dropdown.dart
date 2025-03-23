@@ -73,7 +73,7 @@ class _CustomExpandableDropdownState extends State<CustomExpandableDropdown> {
                     _selectedValue ?? widget.hintText,
                     style: TextStyle(
                       fontWeight: FontWeight.w400,
-                      color: _selectedValue == null ? textColor : Colors.black,
+                      color: _selectedValue == null ? textColor : textColor,
                       fontSize: 16.sp,
                     ),
                   ),
@@ -87,7 +87,6 @@ class _CustomExpandableDropdownState extends State<CustomExpandableDropdown> {
               ),
             ),
           ),
-          // Dropdown Items (When Expanded)
           if (_isExpanded) ...[
             SizedBox(height: 8.h),
             Column(
