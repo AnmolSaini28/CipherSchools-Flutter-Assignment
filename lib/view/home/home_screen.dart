@@ -122,7 +122,19 @@ class _HomeScreenState extends State<HomeScreen> {
       await incomeBox.delete(key);
     } else if (type == 'expense' && expenseBox.containsKey(key)) {
       await expenseBox.delete(key);
-    } else {}
+    } else {
+      return;
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          '$type transaction deleted successfully!',
+          style: const TextStyle(fontSize: 14),
+        ),
+        duration: const Duration(seconds: 5),
+      ),
+    );
 
     _fetchData();
   }
